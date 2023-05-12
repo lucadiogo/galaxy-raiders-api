@@ -3,6 +3,8 @@ package galaxyraiders.core.physics
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
+const val RAD_TO_DEGREE = 180.0 / Math.PI
+
 @JsonIgnoreProperties("unit", "normal", "degree", "magnitude")
 data class Vector2D(val dx: Double, val dy: Double) {
   override fun toString(): String {
@@ -10,57 +12,58 @@ data class Vector2D(val dx: Double, val dy: Double) {
   }
 
   val magnitude: Double
-    get() = INVALID_DOUBLE
+    get() = Math.sqrt(this.dx * this.dx + this.dy * this.dy)
 
   val radiant: Double
-    get() = INVALID_DOUBLE
+    get() = Math.atan(this.dy / this.dx)
 
   val degree: Double
-    get() = INVALID_DOUBLE
+    get() = this.radiant * RAD_TO_DEGREE
 
   val unit: Vector2D
-    get() = INVALID_VECTOR
+    get() = Vector2D(this.dx / this.magnitude, this.dy / this.magnitude)
 
   val normal: Vector2D
-    get() = INVALID_VECTOR
+    get() = Vector2D(-this.dy, this.dx)
 
   operator fun times(scalar: Double): Vector2D {
-    return INVALID_VECTOR
+    return Vector2D(scalar * this.dx, scalar * this.dy)
   }
 
   operator fun div(scalar: Double): Vector2D {
-    return INVALID_VECTOR
+    return Vector2D(this.dx / scalar, this.dy / scalar)
   }
 
   operator fun times(v: Vector2D): Double {
-    return INVALID_DOUBLE
+    return this.dx * v.dx + this.dy * v.dy
   }
 
   operator fun plus(v: Vector2D): Vector2D {
-    return INVALID_VECTOR
+    return Vector2D(this.dx + v.dx, this.dy + v.dy)
   }
 
   operator fun plus(p: Point2D): Point2D {
-    return INVALID_POINT
+    return Point2D(this.dx + p.x, this.dy + p.x)
   }
 
   operator fun unaryMinus(): Vector2D {
-    return INVALID_VECTOR
+    return Vector2D(-this.dx, -this.dy)
   }
 
   operator fun minus(v: Vector2D): Vector2D {
-    return INVALID_VECTOR
+    return this.plus(-v)
   }
 
   fun scalarProject(target: Vector2D): Double {
-    return INVALID_DOUBLE
+    val angle = this.radiant - target.radiant
+    return this.magnitude * Math.cos(angle)
   }
 
   fun vectorProject(target: Vector2D): Vector2D {
-    return INVALID_VECTOR
+    return this.scalarProject(target).times(target.unit)
   }
 }
 
 operator fun Double.times(v: Vector2D): Vector2D {
-  return INVALID_VECTOR
+  return v.times(this)
 }
