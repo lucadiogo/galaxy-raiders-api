@@ -15,7 +15,7 @@ data class Vector2D(val dx: Double, val dy: Double) {
     get() = Math.sqrt(this.dx * this.dx + this.dy * this.dy)
 
   val radiant: Double
-    get() = Math.atan(this.dy / this.dx)
+    get() = Math.atan2(this.dy, this.dx)
 
   val degree: Double
     get() = this.radiant * RAD_TO_DEGREE
