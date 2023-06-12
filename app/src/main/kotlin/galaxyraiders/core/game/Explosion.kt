@@ -8,5 +8,6 @@ class Explosion(
   initialVelocity: Vector2D,
   radius: Double,
   mass: Double
+  wasTriggered: Boolean
 ) :
   SpaceObject("Explosion", 'X', initialPosition, initialVelocity, radius, mass)

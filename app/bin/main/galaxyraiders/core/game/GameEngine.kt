@@ -98,13 +98,14 @@ class GameEngine(
     for (missile in this.field.missiles) {
       for (asteroid in this.field.asteroid) {
         if (missile.impacts(asteroid)) {
-          newExplosion = Explosion(asteroid.initialPosition, 
-                                   Vector2D(0, 0), 
-                                   asteroid.radius, 
-                                   asteroid.mass)
+          newExplosion = Explosion(asteroid.initialPosition,
+                                   Vector2D(0, 0),
+                                   asteroid.radius,
+                                   asteroid.mass,
+                                   false)
           this.field.explosions += newExplosion
           this.field.missiles.remove(missile)
-          this.field.asteroid.remove(asteroid)
+          this.field.asteroids.remove(asteroid)
         }
       }
     }
