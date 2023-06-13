@@ -5,6 +5,8 @@ import galaxyraiders.helpers.ControllerSpy
 import galaxyraiders.helpers.MaxValueGeneratorStub
 import galaxyraiders.helpers.MinValueGeneratorStub
 import galaxyraiders.helpers.VisualizerSpy
+import galaxyraiders.core.physics.Point2D
+import galaxyraiders.core.physics.Vector2D
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
@@ -63,38 +65,80 @@ class GameEngineTest {
   fun `it has an execution status that starts as true`() {
     assertEquals(true, normalGame.playing)
   }
-
+  
   @Test
   fun `it can render its SpaceField`() {
     val initialNumRenders = visualizerSpy.numRenders
-
+    
     normalGame.renderSpaceField()
-
+    
     assertEquals(initialNumRenders + 1, visualizerSpy.numRenders)
   }
-
+  
   @Test
   fun `it can process multiple PlayerCommand`() {
     val numPlayerCommands = controllerSpy.playerCommands.size
-
+    
     // Process all available user commands
     repeat(numPlayerCommands) {
       normalGame.processPlayerInput()
     }
-
+    
     // Should receive a null
     normalGame.processPlayerInput()
-
+    
     assertEquals(0, controllerSpy.playerCommands.size)
+  }
+  
+  @Test
+  fun `it can handle explosions`() {
+    val numAsteroids = hardGame.field.asteroids.size
+    val numMissiles = hardGame.field.missiles.size
+    val numExplosions = hardGame.field.explosions.size
+
+    //these two should collide and create an explosion
+    hardGame.field.asteroids += Asteroid(
+                                initialPosition = Point2D(1.0, 1.0),
+                                initialVelocity = Vector2D(0.0, 0.0),
+                                radius = 1.0,
+                                mass = 1.0,
+                                )
+
+    hardGame.field.missiles += Missile(
+                                  initialPosition = Point2D(1.0, 1.0),
+                                  initialVelocity = Vector2D(0.0, 0.0),
+                                  radius = 1.0,
+                                  mass = 1.0,
+                                  )
+  
+    //these two shouldn't collide with anything
+    hardGame.field.asteroids +=  Asteroid(
+                                    initialPosition = Point2D(3.0, 3.0),
+                                    initialVelocity = Vector2D(0.0, 0.0),
+                                    radius = 0.5,
+                                    mass = 1.0,
+                                    )
+    
+    hardGame.field.missiles += Missile(
+                                      initialPosition = Point2D(10.0, 10.0),
+                                      initialVelocity = Vector2D(0.0, 0.0),
+                                      radius = 0.5,
+                                      mass = 1.0,
+                                      )
+    
+    hardGame.handleExplosions()
+    assertEquals(hardGame.field.asteroids.size, numAsteroids + 1)
+    assertEquals(hardGame.field.missiles.size, numMissiles + 1)
+    assertEquals(hardGame.field.explosions.size, numExplosions + 1)
   }
 
   @Test
   fun `it updates its space objects while playing`() {
     val numAsteroids = hardGame.field.asteroids.size
-
+    
     hardGame.playing = true
     hardGame.updateSpaceObjects()
-
+    
     assertEquals(numAsteroids + 1, hardGame.field.asteroids.size)
   }
 
@@ -237,4 +281,7 @@ class GameEngineTest {
       { assertTrue(hardGame.field.asteroids.size <= numPlayerCommands - 1) },
     )
   }
+
+
+
 }

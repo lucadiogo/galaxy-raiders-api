@@ -78,7 +78,6 @@ class GameEngine(
 
   fun updateSpaceObjects() {
     if (!this.playing) return
-    this.handleExplosions()
     this.handleCollisions()
     this.moveSpaceObjects()
     this.trimSpaceObjects()
@@ -94,23 +93,6 @@ class GameEngine(
     }
   }
 
-  fun handleExplosions() {
-    for (missile in this.field.missiles) {
-      for (asteroid in this.field.asteroid) {
-        if (missile.impacts(asteroid)) {
-          newExplosion = Explosion(asteroid.initialPosition,
-                                   Vector2D(0, 0),
-                                   asteroid.radius,
-                                   asteroid.mass,
-                                   false)
-          this.field.explosions += newExplosion
-          this.field.missiles.remove(missile)
-          this.field.asteroids.remove(asteroid)
-        }
-      }
-    }
-  }
-
   fun moveSpaceObjects() {
     this.field.moveShip()
     this.field.moveAsteroids()
@@ -120,6 +102,7 @@ class GameEngine(
   fun trimSpaceObjects() {
     this.field.trimAsteroids()
     this.field.trimMissiles()
+    this.field.trimExplosions()
   }
 
   fun generateAsteroids() {

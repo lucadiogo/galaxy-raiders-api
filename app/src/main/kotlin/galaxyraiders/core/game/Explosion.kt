@@ -7,7 +7,6 @@ class Explosion(
   initialPosition: Point2D,
   initialVelocity: Vector2D,
   radius: Double,
-  mass: Double,
-  val wasTriggered: Boolean
+  mass: Double
 ) :
   SpaceObject("Explosion", 'X', initialPosition, initialVelocity, radius, mass)

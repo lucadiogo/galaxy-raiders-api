@@ -5,6 +5,7 @@ import galaxyraiders.ports.RandomGenerator
 import galaxyraiders.ports.ui.Controller
 import galaxyraiders.ports.ui.Controller.PlayerCommand
 import galaxyraiders.ports.ui.Visualizer
+import galaxyraiders.core.physics.Vector2D
 import kotlin.system.measureTimeMillis
 
 const val MILLISECONDS_PER_SECOND: Int = 1000
@@ -78,6 +79,7 @@ class GameEngine(
 
   fun updateSpaceObjects() {
     if (!this.playing) return
+    this.handleExplosions()
     this.handleCollisions()
     this.moveSpaceObjects()
     this.trimSpaceObjects()
@@ -93,6 +95,16 @@ class GameEngine(
     }
   }
 
+  fun handleExplosions() {
+    for (missile in this.field.missiles) {
+      for (asteroid in this.field.asteroids) {
+        if (missile.impacts(asteroid)) {
+          this.field.createExplosion(missile, asteroid)
+        }
+      }
+    }
+  }
+
   fun moveSpaceObjects() {
     this.field.moveShip()
     this.field.moveAsteroids()
@@ -102,6 +114,7 @@ class GameEngine(
   fun trimSpaceObjects() {
     this.field.trimAsteroids()
     this.field.trimMissiles()
+    this.field.trimExplosions()
   }
 
   fun generateAsteroids() {
