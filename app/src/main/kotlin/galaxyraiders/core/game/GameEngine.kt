@@ -27,6 +27,8 @@ class GameEngine(
   val generator: RandomGenerator,
   val controller: Controller,
   val visualizer: Visualizer,
+  var score: Int = 0,
+  var asteroidsDestroyed: Int = 0
 ) {
   val field = SpaceField(
     width = GameEngineConfig.spaceFieldWidth,
@@ -55,6 +57,7 @@ class GameEngine(
   fun tick() {
     this.processPlayerInput()
     this.updateSpaceObjects()
+    this.updateScore()
     this.renderSpaceField()
   }
 
@@ -114,7 +117,6 @@ class GameEngine(
   fun trimSpaceObjects() {
     this.field.trimAsteroids()
     this.field.trimMissiles()
-    this.field.trimExplosions()
   }
 
   fun generateAsteroids() {
@@ -124,6 +126,17 @@ class GameEngine(
       this.field.generateAsteroid()
     }
   }
+
+  fun updateScore() {
+    for (explosion in this.field.explosions) {
+      asteroidsDestroyed++
+      score += (100 * explosion.mass / explosion.radius).toInt()
+    }
+    this.field.trimExplosions()
+  }
+
+
+
 
   fun renderSpaceField() {
     this.visualizer.renderSpaceField(this.field)

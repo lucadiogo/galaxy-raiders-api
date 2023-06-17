@@ -377,6 +377,22 @@ class SpaceFieldTest {
     assertNotEquals(-1, spaceField.asteroids.indexOf(asteroid))
   }
 
+  @Test
+  fun `it can clean up explosions`() {
+    spaceField.explosions += Explosion(initialPosition = Point2D(1.0, 1.0),
+                                       initialVelocity = Vector2D(1.0, 0.0),
+                                       radius = 1.0,
+                                       mass = 1.0)
+
+    spaceField.explosions += Explosion(initialPosition = Point2D(2.0, 2.0),
+                                       initialVelocity = Vector2D(2.0, 0.0),
+                                       radius = 2.0,
+                                       mass = 2.0)
+
+    spaceField.trimExplosions()
+    assertEquals(0, spaceField.asteroids.size)
+  }
+
   private companion object {
     @JvmStatic
     fun provideSpaceFieldWithCornerCaseGeneratorArguments(): Stream<Arguments> {
