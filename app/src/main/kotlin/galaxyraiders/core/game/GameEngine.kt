@@ -27,8 +27,8 @@ class GameEngine(
   val generator: RandomGenerator,
   val controller: Controller,
   val visualizer: Visualizer,
-  val recorder: ScoreRecorder
-) {
+  var score: Int = 0,
+  var asteroidsDestroyed: Int = 0) {
   val field = SpaceField(
     width = GameEngineConfig.spaceFieldWidth,
     height = GameEngineConfig.spaceFieldHeight,
@@ -38,7 +38,6 @@ class GameEngine(
   var playing = true
 
   fun execute() {
-    this.recorder.setDate()
     while (true) {
       val duration = measureTimeMillis { this.tick() }
 
@@ -46,15 +45,12 @@ class GameEngine(
         maxOf(0, GameEngineConfig.msPerFrame - duration)
       )
     }
-    this.recorder.saveScore()
   }
 
   fun execute(maxIterations: Int) {
-    this.recorder.setDate()
     repeat(maxIterations) {
       this.tick()
     }
-    this.recorder.saveScore()
   }
 
   fun tick() {
@@ -132,8 +128,8 @@ class GameEngine(
 
   fun updateScore() {
     for (explosion in this.field.explosions) {
-      this.recorder.asteroidsDestroyed++
-      this.recorder.score += (100 * explosion.mass / explosion.radius).toInt()
+      this.asteroidsDestroyed++
+      this.score += (100 * explosion.mass / explosion.radius).toInt()
     }
     this.field.trimExplosions()
   }

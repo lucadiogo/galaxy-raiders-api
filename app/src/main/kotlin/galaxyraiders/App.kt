@@ -30,10 +30,18 @@ fun main() {
   val (controller, visualizer) = ui.build()
 
   val gameEngine = GameEngine(
-    generator, controller, visualizer, ScoreRecorder()
+    generator, controller, visualizer
   )
 
-  thread { gameEngine.execute() }
+  val recorder = ScoreRecorder()
+  thread { 
+    recorder.setDate()
+    gameEngine.execute()
+    
+    recorder.score = gameEngine.score
+    recorder.asteroidsDestroyed = gameEngine.asteroidsDestroyed
+    recorder.saveScore()
+  }
 
   ui.start()
 
