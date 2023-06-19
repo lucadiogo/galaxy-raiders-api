@@ -43,7 +43,6 @@ class GameEngineTest {
 
   @Test
   fun `it has its parameters initialized correctly `() {
-    println(System.getProperty("java.class.path"))
     assertAll(
       "GameEngine should initialize all its parameters correctly",
       { assertNotNull(normalGame) },
