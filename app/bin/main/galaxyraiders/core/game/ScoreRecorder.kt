@@ -74,7 +74,7 @@ class ScoreRecorder (
 
     }
 
-    private fun findAndReplace(list: MutableList<ScoreRecorder>): Boolean {
+    fun findAndReplace(list: MutableList<ScoreRecorder>): Boolean {
         var len = list.size
         if (len == 0) return false
 
