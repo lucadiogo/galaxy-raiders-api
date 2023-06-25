@@ -9,6 +9,7 @@ import galaxyraiders.core.physics.Vector2D
 import kotlin.system.measureTimeMillis
 
 const val MILLISECONDS_PER_SECOND: Int = 1000
+const val ticksUntilSave: Int = 1000
 
 object GameEngineConfig {
   private val config = Config(prefix = "GR__CORE__GAME__GAME_ENGINE__")
@@ -21,13 +22,15 @@ object GameEngineConfig {
 
   val msPerFrame: Int = MILLISECONDS_PER_SECOND / this.frameRate
 }
-
+//a
 @Suppress("TooManyFunctions")
 class GameEngine(
   val generator: RandomGenerator,
   val controller: Controller,
   val visualizer: Visualizer,
-) {
+  val recorder: ScoreRecorder = ScoreRecorder(),
+  var tickCounter: Int = 0
+  ) {
   val field = SpaceField(
     width = GameEngineConfig.spaceFieldWidth,
     height = GameEngineConfig.spaceFieldHeight,
@@ -37,6 +40,7 @@ class GameEngine(
   var playing = true
 
   fun execute() {
+    this.recorder.setDate()
     while (true) {
       val duration = measureTimeMillis { this.tick() }
 
@@ -47,6 +51,7 @@ class GameEngine(
   }
 
   fun execute(maxIterations: Int) {
+    this.recorder.setDate()
     repeat(maxIterations) {
       this.tick()
     }
@@ -56,6 +61,13 @@ class GameEngine(
     this.processPlayerInput()
     this.updateSpaceObjects()
     this.renderSpaceField()
+    this.updateScore()
+    
+    tickCounter++
+    if (tickCounter > ticksUntilSave) {
+      this.recorder.saveScore()
+      tickCounter = 0
+    }
   }
 
   fun processPlayerInput() {
@@ -114,7 +126,6 @@ class GameEngine(
   fun trimSpaceObjects() {
     this.field.trimAsteroids()
     this.field.trimMissiles()
-    this.field.trimExplosions()
   }
 
   fun generateAsteroids() {
@@ -123,6 +134,14 @@ class GameEngine(
     if (probability <= GameEngineConfig.asteroidProbability) {
       this.field.generateAsteroid()
     }
+  }
+
+  fun updateScore() {
+    for (explosion in this.field.explosions) {
+      this.recorder.asteroidsDestroyed++
+      this.recorder.score += (100 * explosion.mass / explosion.radius).toInt()
+    }
+    this.field.trimExplosions()
   }
 
   fun renderSpaceField() {

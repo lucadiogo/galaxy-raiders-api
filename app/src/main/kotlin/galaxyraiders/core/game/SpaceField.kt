@@ -161,7 +161,7 @@ data class SpaceField(val width: Int, val height: Int, val generator: RandomGene
   fun createExplosion(missile: Missile, asteroid: Asteroid) {
     val newExplosion = Explosion(asteroid.center,
                                  asteroid.velocity,
-                                 asteroid.radius,
+                                 10.0 * asteroid.radius,
                                  asteroid.mass)
     this.explosions += newExplosion
     this.missiles = this.missiles.filter {it != missile}

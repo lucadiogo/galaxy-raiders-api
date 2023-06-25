@@ -5,6 +5,7 @@ import galaxyraiders.adapters.BasicRandomGenerator
 import galaxyraiders.adapters.tui.TextUserInterface
 import galaxyraiders.adapters.web.WebUserInterface
 import galaxyraiders.core.game.GameEngine
+import galaxyraiders.core.game.ScoreRecorder
 import kotlin.concurrent.thread
 import kotlin.random.Random
 
@@ -14,6 +15,7 @@ object AppConfig {
   val randomSeed = config.get<Int>("RANDOM_SEED")
   val operationMode = config.get<OperationMode>("OPERATION_MODE")
 }
+
 
 fun main() {
   val generator = BasicRandomGenerator(
@@ -30,8 +32,10 @@ fun main() {
   val gameEngine = GameEngine(
     generator, controller, visualizer
   )
-
-  thread { gameEngine.execute() }
+  thread { 
+    gameEngine.execute()
+  }
 
   ui.start()
+
 }
